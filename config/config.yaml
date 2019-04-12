@@ -1,0 +1,7 @@
+mongo:
+        host: localhost
+        user: ""
+        passwd: ""
+        db: "packtrack-dev"
+dev:
+        debug: True
