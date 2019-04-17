@@ -3,14 +3,24 @@
 from flask import Flask, request, jsonify
 from utils import functions as _functions
 # Routes imports
-from routes import public
+import routes as _routes
+# Models
+from models import rest as _rest
 
 app = Flask(__name__) # Create http server
-app.config["DEBUG"] = _functions.Config['dev']['debug']
+_Config = _functions.Config
+if _functions.resultError(_Config):
+    print(_Config.error)
+    exit(1)
+
+app.config["DEBUG"] = _Config['dev']['debug']
 
 # Append routes
 @app.route('/', methods=['GET'])
 def alive():
-    return public.alive()
+    try:
+        return __routes.public.alive()
+    except:
+        return ("")
     
 app.run()
