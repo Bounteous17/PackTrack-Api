@@ -11,4 +11,7 @@ class ModuleStatus():
             self.status = 500
 
     def flaskResp(self):
-        return FlaskResponse(jsonify(self.send), self.status)
+        send = self.payload
+        if self.error is not None:
+            send = self.error
+        return send, self.status

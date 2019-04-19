@@ -3,7 +3,7 @@
 from flask import Flask, request, jsonify
 from utils import functions as _functions
 # Routes imports
-import routes as _routes
+from routes import public as _public
 # Models
 from models import rest as _rest
 
@@ -18,8 +18,13 @@ app.config["DEBUG"] = _Config['dev']['debug']
 @app.route('/', methods=['GET'])
 def alive():
     try:
-        return __routes.public.alive()
-    except:
-        return ("")
+        rAlive = _public.alive()
+        if _functions.resultError(rAlive):
+            return rAlive.flaskResp()
+        return rAlive
+    except Exception as e:
+        error = "Error into /"
+        newError = _functions.setModuleError(payload=e, error=error)
+        return newError.flaskResp()
     
 app.run()

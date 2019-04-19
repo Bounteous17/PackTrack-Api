@@ -1,2 +1,10 @@
+from utils import functions as _functions
+
 def alive():
-    return 'Hi, how are you';
+    try:
+        return 'Hi, how are you';
+    except Exception as e:
+        error = "Error checking alive"
+        newError = _functions.setModuleError(payload=e, error=error)
+        return newError.flaskResp()
+

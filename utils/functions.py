@@ -20,7 +20,7 @@ def getConfig():
     try:
         readYamlConfig = readFile("./config/config.yaml", 'r')
         if resultError(readYamlConfig):
-            exit(1)
+            return readYamlConfig
 
         yamlconfig = readYamlConfig
         config = YAML().load(yamlconfig)
