@@ -1,9 +1,11 @@
 import sys
 from ruamel.yaml import YAML
 from models import rest as _rest
+from utils import colorize as _colorize
 
 def setModuleError(**args):
-    print("Technical error: %s" %(args.get('payload')))
+    _colorize.consoleLog(msg="Technical error: %s" %(args.get('payload')), action="error")
+    _colorize.consoleLog(msg="Response sent to the client: %s" %(args.get('error')), action="info")
     newError = _rest.ModuleStatus(payload=args.get('payload'), error=args.get('error'), status=args.get('status'))
     newError.setStatus()
     return newError
@@ -18,7 +20,6 @@ def getConfig():
     try:
         readYamlConfig = readFile("./config/config.yaml", 'r')
         if resultError(readYamlConfig):
-            print(readYamlConfig.error)
             exit(1)
 
         yamlconfig = readYamlConfig

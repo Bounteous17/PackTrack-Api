@@ -10,7 +10,6 @@ from models import rest as _rest
 app = Flask(__name__) # Create http server
 _Config = _functions.Config
 if _functions.resultError(_Config):
-    print(_Config.error)
     exit(1)
 
 app.config["DEBUG"] = _Config['dev']['debug']
