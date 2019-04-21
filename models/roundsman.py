@@ -3,7 +3,7 @@ import datetime
 
 class RoundsMan(Document):
     email = StringField(required=True, max_length=50, unique=True)
-    password = StringField(required=True, min_length=8, max_length=30)
+    password = StringField(required=True)
     dni = StringField(required=True, length=9, unique=True)
     name = StringField(required=True, max_length=50)
     surname = StringField(required=True, max_length=50)
