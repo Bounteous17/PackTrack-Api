@@ -1,14 +1,18 @@
-from utils import functions as _functions, validators as _validators
+from utils import functions as _functions, validators as _validators, auth as _auth
 from models import roundsman as _roundsman
+
 
 def signup(reqData):
     try:
         valid = _validators.checkMinData(reqData, ['dni', 'name', 'surname', 'age', 'city', 'street', 'post_code', 'email', 'password'])
         if _functions.resultError(valid):
             return valid
+        hashPassword = _auth.hashPassword(reqData['password'])
+        if _functions.resultError(hashPassword):
+            return hashPassword
         newRoundsMan = _roundsman.RoundsMan(
                     email=reqData['email'],
-                    password=reqData['password'],
+                    password=hashPassword,
                     dni=reqData['dni'],
                     name=reqData['name'],
                     surname=reqData['surname'],
