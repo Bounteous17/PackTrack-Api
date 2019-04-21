@@ -1,7 +1,8 @@
-mongo:
-        host: localhost
-        user: ""
-        passwd: ""
-        db: "packtrack-dev"
+db:
+        host: 'localhost'
+        port: 27017
+        user: ''
+        passwd: ''
+        name: "packtrack-dev"
 dev:
         debug: True
