@@ -13,8 +13,11 @@ def login(reqData):
             return _functions.setModuleError(payload='Email not found on DB', error='User not found, try it later...', status=404)
         unHashPassword = _auth.unHashPassword(reqData['password'], user['password'])
         if _functions.resultError(unHashPassword):
-            return unHashPassword
+            return unHashPasswordv
+        token = _auth.encodeJwt(user)
+        if _functions.resultError(token):
+            return token
     
-        return _functions.setModuleSuccess(payload='User login success', status=200)
+        return _functions.setModuleSuccess(payload=token, status=200)
     except Exception as e:
         return _functions.setModuleError(payload=e, error='Error login user, try it later...')
