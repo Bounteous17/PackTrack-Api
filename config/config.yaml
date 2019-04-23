@@ -6,3 +6,6 @@ db:
         name: "packtrack-dev"
 dev:
         debug: True
+jwt:
+        secret: 'keyboard cat'
+        algorithm: 'HS256'
