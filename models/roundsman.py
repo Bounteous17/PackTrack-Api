@@ -2,6 +2,7 @@ from mongoengine import *
 import datetime
 
 class RoundsMan(Document):
+    _id = ObjectIdField()
     email = StringField(required=True, max_length=50, unique=True)
     password = StringField(required=True)
     dni = StringField(required=True, length=9, unique=True)
