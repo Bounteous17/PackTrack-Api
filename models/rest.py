@@ -5,6 +5,7 @@ class ModuleStatus():
         self.status = args.get('status')
         self.payload = args.get('payload')
         self.error = args.get('error')
+        self.key = args.get('key')
 
     def setStatus(self):
         if self.status is None or 200 < self.status > 501:
@@ -14,4 +15,6 @@ class ModuleStatus():
         send = self.payload
         if self.error is not None:
             send = self.error
-        return send, self.status
+        if self.key is None:
+            self.key = 'message'
+        return { self.key: send }, self.status
