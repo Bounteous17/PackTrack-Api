@@ -1,6 +1,8 @@
 #!flask/bin/python
 # Module imports
-from flask import Flask, request,  abort, jsonify
+from flask import Flask
+from flask_restful import Api
+from flask_jwt_extended import JWTManager
 from utils import functions as _functions
 # Routes imports
 from routes.public import status as _status, signup as _signup, login as _login
@@ -12,37 +14,19 @@ from modules.db import db as _db
 _db.instance()
 
 app = Flask(__name__) # Create http server
+api = Api(app)
+
 _Config = _functions.Config
 if _functions.resultError(_Config):
     exit(1)
 
-app.config["DEBUG"] = _Config['dev']['debug']
+app.config['DEBUG'] = _Config['dev']['debug']
+app.config['JWT_SECRET_KEY'] =  _Config['jwt']['secret']
+
+jwt = JWTManager(app)
 
 # Append routes
-@app.route('/', methods=['GET'])
-def alive():
-    try: 
-        return _functions.setFlaskResponse(_status.alive())
-    except Exception as e:
-        return _functions.setFlaskResponse(_functions.setModuleError(payload=e, error="Error into /"))
-
-@app.route('/signup', methods=['POST'])
-def signup():
-    try:
-        if not request.json:
-            abort(400)
-        return _functions.setFlaskResponse(_signup.signup(request.json))
-    except Exception as e:
-        return _functions.setFlaskResponse(_functions.setModuleError(payload=e, error="Error into /signup"))
-
-@app.route('/login', methods=['POST'])
-def login():
-    try:
-        if not request.json:
-            abort(400)
-        return _functions.setFlaskResponse(_login.login(request.json))
-    except Exception as e:
-        return _functions.setFlaskResponse(_functions.setModuleError(payload=e, error="Error into /login"))
-
+api.add_resource(_signup.UserRegistration, '/signup')
+api.add_resource(_login.UserLogin, '/login')
 
 app.run()
