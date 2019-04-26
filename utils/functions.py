@@ -6,12 +6,12 @@ from utils import colorize as _colorize
 def setModuleError(**args):
     _colorize.consoleLog(msg="Technical error: %s" %(args.get('payload')), action="error")
     _colorize.consoleLog(msg="Human error: %s" %(args.get('error')), action="info")
-    return _rest.ModuleStatus(payload=args.get('payload'), error=args.get('error'), status=args.get('status'))
+    return _rest.ModuleStatus(payload=args.get('payload'), error=args.get('error'), key=args.get('key'), status=args.get('status'))
 
 
 def setModuleSuccess(**args):
     _colorize.consoleLog(msg="Success return: %s" %(args.get('payload')), action="success")
-    return _rest.ModuleStatus(payload=args.get('payload'), status=args.get('status'))
+    return _rest.ModuleStatus(payload=args.get('payload'), key=args.get('key'), status=args.get('status'))
 
 def setFlaskResponse(result):
     result.setStatus()
