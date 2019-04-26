@@ -1,7 +1,6 @@
 from utils import functions as _functions, validators as _validators, auth as _auth
 from models import roundsman as _roundsman
 from flask_restful import Resource, reqparse
-from models import rest as _rest
 
 parser = reqparse.RequestParser()
 parser.add_argument('dni', help = 'Dni is not optional', required = True)
