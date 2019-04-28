@@ -1,6 +1,7 @@
 from utils import functions as _functions, validators as _validators, auth as _auth
-from models import roundsman as _roundsman
+from models import user as _user
 from modules.db import tmp_db as _tmpDb
+from modules.user import user as _moduleUser
 from flask_restful import Resource, reqparse
 from flask_jwt_extended import (
     JWTManager, create_access_token, create_refresh_token, get_jti,
@@ -15,7 +16,7 @@ class UserLogin(Resource):
     def post(self):
         try:
             reqData = parser.parse_args()
-            user = _roundsman.RoundsMan.objects.get(email = reqData['email'])
+            user = _moduleUser.findOne('email', reqData['email'])
             if user is None:
                 return _functions.setModuleError(payload='Email not found on DB', error='User not found, try it later...', status=404).flaskResp()
             unHashPassword = _auth.unHashPassword(reqData['password'], user['password'])

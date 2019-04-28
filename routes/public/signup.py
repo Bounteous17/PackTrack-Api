@@ -1,5 +1,5 @@
 from utils import functions as _functions, validators as _validators, auth as _auth
-from models import roundsman as _roundsman
+from models import user as _user
 from flask_restful import Resource, reqparse
 
 parser = reqparse.RequestParser()
@@ -20,7 +20,7 @@ class UserRegistration(Resource):
             hashPassword = _auth.hashPassword(reqData['password'])
             if _functions.resultError(hashPassword):
                 return hashPassword
-            newRoundsMan = _roundsman.RoundsMan(
+            newRoundsMan = _user.User(
                 email=reqData['email'],
                 password=hashPassword,
                 dni=reqData['dni'],
