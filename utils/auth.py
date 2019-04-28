@@ -1,5 +1,6 @@
 import bcrypt
 import jwt
+from models import auth as _auth
 from utils import functions as _functions
 from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required, jwt_refresh_token_required, get_jwt_identity, get_raw_jwt
 
@@ -21,6 +22,9 @@ def unHashPassword(p_password, h_password):
 
 def encodeJwt(user):
     try:
-        return create_access_token(identity = str(user._id))
+        return _auth.Tokens(
+                    token=create_access_token(identity = str(user._id)),
+                    rToken=create_refresh_token(identity = str(user._id))
+                )
     except Exception as e:
         return _functions.setModuleError(payload=e, error='Error generating token, try it later...', status=500)
