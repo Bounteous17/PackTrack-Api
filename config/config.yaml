@@ -1,3 +1,5 @@
+app:
+        secret: 'why not'
 db:
         host: 'localhost'
         port: 27017
@@ -7,5 +9,13 @@ db:
 dev:
         debug: True
 jwt:
-        secret: 'keyboard cat'
+        secret: 'why not' 
         algorithm: 'HS256'
+        access_expires: 15
+        refresh_expires: 3
+redis:
+        host: 'localhost'
+        port: 6379
+        instances:
+                revoke:
+                        db: '0'
