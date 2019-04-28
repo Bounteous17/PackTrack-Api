@@ -17,4 +17,6 @@ class ModuleStatus():
             send = self.error
         if self.key is None:
             self.key = 'message'
+        elif self.key is 'master':
+            return send, self.status
         return { self.key: send }, self.status
