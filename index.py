@@ -6,6 +6,7 @@ from flask_jwt_extended import JWTManager
 from utils import functions as _functions
 # Routes imports
 from routes.public import status as _status, signup as _signup, login as _login
+from routes.private import user as _privUser
 # Models
 from models import rest as _rest, redis as _redis
 # Modules
@@ -35,8 +36,18 @@ jwt = JWTManager(app)
 
 app.config['DEBUG'] = _Config['dev']['debug']
 
+@jwt.token_in_blacklist_loader
+def check_if_token_is_revoked(decrypted_token):
+    jti = decrypted_token['jti']
+    entry = _tmpDb.RevokeInstance.get(jti)
+    if entry is None:
+        return True
+    return entry == 'true'
+
 # Append routes
 api.add_resource(_signup.UserRegistration, '/signup')
 api.add_resource(_login.UserLogin, '/login')
+# Private
+api.add_resource(_privUser.Info, '/user')
 
 app.run()
