@@ -48,5 +48,10 @@ def respStatus(status):
         status = 200
     return status
 
+def dumper(obj):
+    try:
+        return obj.toJSON()
+    except:
+        return obj.__dict__
 
 Config = getConfig()

@@ -1,4 +1,5 @@
 from flask import make_response as FlaskResponse, jsonify
+from json import JSONEncoder
 
 class ModuleStatus():
     def __init__(self, **args):
@@ -17,4 +18,10 @@ class ModuleStatus():
             send = self.error
         if self.key is None:
             self.key = 'message'
-        return { self.key: send }, self.status
+        if self.key is not 'master':
+            return { self.key: send }, self.status
+        return send, self.status
+
+class Encoder(JSONEncoder):
+    def default(self, o):
+        return o.__dict__
