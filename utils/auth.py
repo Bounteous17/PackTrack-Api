@@ -20,10 +20,13 @@ def unHashPassword(p_password, h_password):
     except Exception as e:
         return _functions.setModuleError(payload=e, error='Error unhashing password, try it later...', status=500)
 
+def createAccessToken(userId):
+    return create_access_token(identity = userId)
+
 def encodeJwt(user):
     try:
         return _auth.Tokens(
-                    token=create_access_token(identity = str(user._id)),
+                    token=createAccessToken(str(user._id)),
                     rToken=create_refresh_token(identity = str(user._id))
                 )
     except Exception as e:

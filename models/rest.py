@@ -19,4 +19,6 @@ class ModuleStatus():
             self.key = 'message'
         elif self.key is 'master':
             return send, self.status
+        elif self.key is 'encode':
+            return jsonify(send), self.status
         return { self.key: send }, self.status

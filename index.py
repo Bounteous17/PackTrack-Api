@@ -1,14 +1,17 @@
 #!flask/bin/python
 # Module imports
-from flask import Flask
+from flask import Flask, jsonify
 from flask_restful import Api
-from flask_jwt_extended import JWTManager
-from utils import functions as _functions
+from flask_jwt_extended import (
+    JWTManager, create_access_token, create_refresh_token, get_jti,
+    jwt_refresh_token_required, get_jwt_identity, jwt_required, get_raw_jwt
+)
+from utils import functions as _functions, auth as _auth
 # Routes imports
 from routes.public import status as _status, signup as _signup, login as _login
 from routes.private import user as _privUser
 # Models
-from models import rest as _rest, redis as _redis
+from models import rest as _rest, redis as _redis, auth as _modelAuth
 # Modules
 from modules.db import db as _db, tmp_db as _tmpDb
 
@@ -44,6 +47,15 @@ def check_if_token_is_revoked(decrypted_token):
     if entry is None:
         return True
     return entry == 'true'
+
+@app.route('/auth/refresh', methods=['POST'])
+@jwt_refresh_token_required
+def refresh():
+    current_user = get_jwt_identity()
+    access_token = _auth.createAccessToken(current_user)
+    access_jti = get_jti(encoded_token=access_token)
+    _tmpDb.RevokeInstance.set(access_jti, 'false', ACCESS_EXPIRES * 1.2)
+    return _functions.setModuleSuccess(payload={'access_token': access_token}, key='encode', status=201).flaskResp()
 
 # Append routes
 api.add_resource(_signup.UserRegistration, '/signup')
