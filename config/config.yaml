@@ -9,10 +9,10 @@ db:
 dev:
         debug: True
 jwt:
-        secret: 'why not' 
-        algorithm: 'HS256'
-        access_expires: 15
-        refresh_expires: 3
+        secret: 'of course'
+        algorithm: 'HS512'
+        access_expires: 30 #minutes
+        refresh_expires: 4 #days
 redis:
         host: 'localhost'
         port: 6379

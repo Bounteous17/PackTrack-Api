@@ -32,6 +32,7 @@ app.config['JWT_REFRESH_TOKEN_EXPIRES'] = REFRESH_EXPIRES
 app.config['JWT_BLACKLIST_ENABLED'] = True
 app.config['JWT_BLACKLIST_TOKEN_CHECKS'] = ['access', 'refresh']
 app.config['JWT_SECRET_KEY'] = _Config['jwt']['secret']
+app.config['JWT_ALGORITHM'] = _Config['jwt']['algorithm']
 jwt = JWTManager(app)
 
 app.config['DEBUG'] = _Config['dev']['debug']
