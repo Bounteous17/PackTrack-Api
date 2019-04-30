@@ -1,5 +1,5 @@
 from flask_restful import Resource
-from flask_jwt_extended import jwt_required, get_jwt_identity, get_raw_jwt, get_jti
+from flask_jwt_extended import jwt_required, get_jwt_identity, get_raw_jwt, get_jti, jwt_refresh_token_required
 from utils import functions as _functions, auth as _utilAuth
 from modules.db import tmp_db as _tmpDb
 
@@ -7,7 +7,7 @@ ACCESS_EXPIRES = _tmpDb.TokensExpires.access_expires
 REFRESH_EXPIRES = _tmpDb.TokensExpires.refresh_expires
 
 class Auth(Resource):
-    @jwt_required
+    @jwt_refresh_token_required
     # Refresh token
     def post(self):
         try:
