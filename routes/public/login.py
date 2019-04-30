@@ -31,7 +31,6 @@ class UserLogin(Resource):
             _tmpDb.RevokeInstance.set(access_jti, 'false', _tmpDb.TokensExpires.access_expires * 1.2)
             _tmpDb.RevokeInstance.set(refresh_jti, 'false', _tmpDb.TokensExpires.refresh_expires * 1.2)
 
-            res = _functions.setModuleSuccess(payload={'access_token': tokens.token, 'refresh_token':  tokens.rToken}, key='tokens', status=201).flaskResp()
-            return res
+            return _functions.setModuleSuccess(payload={'access_token': tokens.token, 'refresh_token':  tokens.rToken}, key='tokens', status=201).flaskResp()
         except Exception as e:
             return _functions.setModuleError(payload=e, error='Error login user, try it later...', status=500).flaskResp()

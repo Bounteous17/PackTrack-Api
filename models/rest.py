@@ -16,9 +16,9 @@ class ModuleStatus():
         if self.error is not None:
             send = self.error
         if self.key is None:
-            self.key = 'message'
-        elif self.key is 'master':
+            self.key = 'msg'
+        elif self.key == 'master':
             return send, self.status
-        elif self.key is 'encode':
+        elif self.key == 'encode':
             return jsonify(send), self.status
         return { self.key: send }, self.status
