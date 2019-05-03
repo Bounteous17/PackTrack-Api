@@ -1,13 +1,14 @@
 #!flask/bin/python
 # Module imports
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_restful import Api
 from flask_jwt_extended import JWTManager
+from flask_socketio import SocketIO, send, emit
 
 from utils import functions as _functions, auth as _auth
 # Routes imports
 from routes.public import status as _status, signup as _signup, login as _login
-from routes.private import user as _privUser, auth as _privAuth
+from routes.private import user as _privUser, auth as _privAuth, chat as _privChat
 # Models
 from models import rest as _rest, redis as _redis, auth as _modelAuth
 # Modules
@@ -21,9 +22,10 @@ _Config = _functions.Config
 if _functions.resultError(_Config):
     exit(1)
 
-api = Api(app)
-
 app.secret_key = _Config['app']['secret']
+
+api = Api(app)
+socketio = SocketIO(app)
 
 ACCESS_EXPIRES = _tmpDb.TokensExpires.access_expires
 REFRESH_EXPIRES = _tmpDb.TokensExpires.refresh_expires
@@ -38,6 +40,8 @@ jwt = JWTManager(app)
 
 app.config['DEBUG'] = _Config['dev']['debug']
 
+users = {}
+
 @jwt.token_in_blacklist_loader
 def check_if_token_is_revoked(decrypted_token):
     jti = decrypted_token['jti']
@@ -46,11 +50,37 @@ def check_if_token_is_revoked(decrypted_token):
         return True
     return entry == 'true'
 
+@app.route('/orginate')
+def orginate():
+    socketio.emit('server orginated', 'Something happened on the server!')
+    return '<h1>Sent!</h1>'
+
+@socketio.on('message from user', namespace='/messages')
+def receive_message_from_user(message):
+    print('USER MESSAGE: {}'.format(message))
+    emit('from flask', message.upper(), broadcast=True)
+
+@socketio.on('username', namespace='/private')
+def receive_username(username):
+    users[username] = request.sid
+    #users.append({username : request.sid})
+    #print(users)
+    print(f'Username {username} added!')
+
+@socketio.on('private_message', namespace='/private')
+def private_message(payload):
+    username = payload['username']
+    recipient_session_id = users[username]
+    message = payload['message']
+    print (f'Message {message} sent to {username} with id {recipient_session_id}')
+    emit('new_private_message', message, room=recipient_session_id)
+
 # Append routes
 api.add_resource(_signup.UserRegistration, '/signup')
 api.add_resource(_login.UserLogin, '/login')
 # Private
 api.add_resource(_privUser.Info, '/user')
 api.add_resource(_privAuth.Auth, '/auth')
+api.add_resource(_privChat.Chat, '/chat')
 
 app.run()

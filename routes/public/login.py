@@ -9,19 +9,19 @@ from flask_jwt_extended import (
 )
 
 parser = reqparse.RequestParser()
-parser.add_argument('email', help = "Email can not be blank", required = True)
+parser.add_argument('username', help = "Username can not be blank", required = True)
 parser.add_argument('password', help = "Password can not be blank", required = True)
 
 class UserLogin(Resource):
     def post(self):
         try:
             reqData = parser.parse_args()
-            user = _moduleUser.findOne('email', reqData['email'])
+            user = _moduleUser.findOne('username', reqData['username'])
             if user is None:
-                return _functions.setModuleError(payload='Email not found on DB', error='User not found, try it later...', status=404).flaskResp()
+                return _functions.setModuleError(payload='User not found on DB', error='User not found, try it later...', status=404).flaskResp()
             unHashPassword = _auth.unHashPassword(reqData['password'], user['password'])
             if _functions.resultError(unHashPassword):
-                return unHashPasswordv.flaskResp()
+                return unHashPassword.flaskResp()
             tokens = _auth.encodeJwt(user)
             if _functions.resultError(tokens):
                 return token.flaskResp()
@@ -31,6 +31,6 @@ class UserLogin(Resource):
             _tmpDb.RevokeInstance.set(access_jti, 'false', _tmpDb.TokensExpires.access_expires * 1.2)
             _tmpDb.RevokeInstance.set(refresh_jti, 'false', _tmpDb.TokensExpires.refresh_expires * 1.2)
 
-            return _functions.setModuleSuccess(payload={'access_token': tokens.token, 'refresh_token':  tokens.rToken}, key='tokens', status=201).flaskResp()
+            return _functions.setModuleSuccess(payload={'msg': 'Login success', 'access_token': tokens.token, 'refresh_token':  tokens.rToken}, key='master', status=201).flaskResp()
         except Exception as e:
             return _functions.setModuleError(payload=e, error='Error login user, try it later...', status=500).flaskResp()
