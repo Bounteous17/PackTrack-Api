@@ -1,4 +1,5 @@
 from flask import make_response as FlaskResponse, jsonify
+import json
 
 class ModuleStatus():
     def __init__(self, **args):
@@ -21,4 +22,6 @@ class ModuleStatus():
             return send, self.status
         elif self.key == 'encode':
             return jsonify(send), self.status
+        elif self.key == 'list':
+            return json.dumps(send, default=str), self.status
         return { self.key: send }, self.status

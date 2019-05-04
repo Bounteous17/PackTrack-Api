@@ -1,21 +1,69 @@
-from utils import functions as _functions
-from models import user as _user
+from utils import functions as _functions, responses as _responses
+from models import models as _models
+from modules.db import utils as _mDbUtils
 import bson
+
+def myChats(userId):
+    try:
+        userChats = list(_models.User.objects.aggregate(*[
+                    { '$match': { '_id': _mDbUtils.hexObjId(userId) } },
+                    { '$unwind': '$chats' },
+                    {
+                        '$lookup':{
+                            'from': _models.Chat._get_collection_name(),
+                            'localField': 'chats',
+                            'foreignField': '_id',
+                            'as': 'chatObjects'
+                        }
+                    },
+                    { '$unwind': '$chatObjects' },
+                    { "$group": {
+                        "_id": "$_id",
+                        "chats": { "$push": "$chatObjects" }
+                    }}
+                ]))[0]
+        return userChats['chats']
+    except Exception as e:
+        return _functions.setModuleError(payload=e, error='Error listing user chats ...', status=500)
+
+def checkExists(field, value):
+    try:
+        return _models.User.objects.get(** {'{}'.format(field): value})
+    except _models.User.DoesNotExist:
+       return False
+    except Exception as e:
+        return _functions.setModuleError(payload=e, error='Error check user exists ...', status=500)
 
 def findById(userId):
     try:
-        return _user.User.objects.get(_id = userId)
+        return _models.User.objects.get(_id = userId)
     except Exception as e:
         return _functions.setModuleError(payload=e, error='Error find user ...', status=500)
 
 def findOne(field, value):
     try:
         condition = {'{}'.format(field): value}
-        if _user.User.objects.filter(** condition).count() > 0:
-            return _user.User.objects.get(** condition)
-        return _functions.setModuleError(payload='User not found on users collection', error='User not found ...', status=404)
+        checkUser = checkExists(field, value)
+        if _functions.resultError(checkUser):
+            return checkUser
+        if not checkUser:
+            return _responses.userNotFound()
+        return _models.User.objects.get(** condition)
     except Exception as e:
         return _functions.setModuleError(payload=e, error='Error find user ...', status=500)
+
+def findOneAndUpdate(field, value, uField, uValue):
+    try:
+        condition = {'{}'.format(field): value}
+        checkUser = checkExists(field, value)
+        if _functions.resultError(checkUser):
+            return checkUser
+        if not checkUser:
+            return _responses.userNotFound()
+        return _models.User.objects(** condition).update_one(push__chats=uValue)
+    except Exception as e:
+        return _functions.setModuleError(payload=e, error='Error updating user ...', status=500)
+
 
 def selectInfo(fields, User):
     info = {}
