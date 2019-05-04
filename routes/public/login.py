@@ -1,5 +1,4 @@
 from utils import functions as _functions, validators as _validators, auth as _auth
-from models import user as _user
 from modules.db import tmp_db as _tmpDb
 from modules.user import user as _moduleUser
 from flask_restful import Resource, reqparse
