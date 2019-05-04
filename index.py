@@ -83,4 +83,5 @@ api.add_resource(_privUser.Info, '/user')
 api.add_resource(_privAuth.Auth, '/auth')
 api.add_resource(_privChat.Chat, '/chat')
 
-app.run()
+#Start APP multiple CPUs
+app.run(threaded=_Config['app']['threaded'])
