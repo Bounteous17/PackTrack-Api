@@ -1,5 +1,6 @@
 app:
         secret: 'why not'
+        threaded: True
 db:
         host: 'localhost'
         port: 27017
