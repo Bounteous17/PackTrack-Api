@@ -4,6 +4,7 @@ from flask import Flask, jsonify, request
 from flask_restful import Api
 from flask_jwt_extended import JWTManager
 from flask_socketio import SocketIO, send, emit
+from flask_cors import CORS
 
 from utils import functions as _functions, auth as _auth
 # Routes imports
@@ -17,6 +18,7 @@ from modules.db import db as _db, tmp_db as _tmpDb
 _db.instance()
 
 app = Flask(__name__) # Create http server
+CORS(app)
 
 _Config = _functions.Config
 if _functions.resultError(_Config):
