@@ -9,7 +9,7 @@ from flask_cors import CORS
 from utils import functions as _functions, auth as _auth
 # Routes imports
 from routes.public import status as _status, signup as _signup, login as _login
-from routes.private import user as _privUser, auth as _privAuth, chat as _privChat
+from routes.private import user as _privUser, auth as _privAuth, chat as _privChat, message as _privMessage
 # Models
 from models import rest as _rest, redis as _redis, auth as _modelAuth
 # Modules
@@ -84,6 +84,7 @@ api.add_resource(_login.UserLogin, '/login')
 api.add_resource(_privUser.Info, '/user')
 api.add_resource(_privAuth.Auth, '/auth')
 api.add_resource(_privChat.Chat, '/chat')
+api.add_resource(_privMessage.Message, '/message')
 
 #Start APP multiple CPUs
 app.run(host='0.0.0.0', threaded=_Config['app']['threaded'])

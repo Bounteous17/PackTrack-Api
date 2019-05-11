@@ -1,6 +1,5 @@
 from utils import functions as _functions, responses as _responses
 from models import models as _models
-import bson
 
 def checkExists(field, value):
     try:
@@ -13,9 +12,9 @@ def checkExists(field, value):
 
 def findById(chatId):
     try:
-        return _models.Chat.objects.get(_id = chatId)
+        return _models.Chat.objects.get(id = chatId)
     except Exception as e:
-        return _functions.setModuleError(payload=e, error='Error find chat ...', status=500)
+        return _functions.setModuleError(payload=e, error='Error find chat by id ...', status=500)
 
 def findOne(field, value):
     try:
