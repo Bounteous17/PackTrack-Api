@@ -1,4 +1,6 @@
-from flask import make_response as FlaskResponse, jsonify
+from flask import make_response as FlaskResponse, jsonify, Response
+from utils.db import JSONEncoder as _JSONEncoder
+from bson import json_util
 import json
 
 class ModuleStatus():
@@ -24,4 +26,6 @@ class ModuleStatus():
             return jsonify(send), self.status
         elif self.key == 'list':
             return json.dumps(send, default=str), self.status
+        elif self.key == 'mongo':
+            return Response(_JSONEncoder().encode(send), mimetype='application/json; charset=utf-8')
         return { self.key: send }, self.status
