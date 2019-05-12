@@ -5,3 +5,7 @@ def chatNotFound():
 
 def userNotFound():
     return _functions.setModuleError(payload='User not found', error='User not found ...', status=404)
+
+def unwantedRes(objName):
+    if objName is 'user':
+        return ['_id', 'created', 'password', 'chats']
