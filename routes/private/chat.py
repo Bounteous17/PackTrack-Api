@@ -1,4 +1,4 @@
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt_claims
 from flask_restful import Resource, reqparse
 from utils import functions as _functions, responses as _responses
 from models import models as _models
@@ -22,15 +22,15 @@ class Chat(Resource):
             if _functions.resultError(sUser):
                 return sUser.flaskResp()
             alloweds.append(sUser._id)
-            creator = get_jwt_identity()
-            alloweds.append(creator)
+            creator = get_jwt_claims()
+            alloweds.append(creator['identity'])
             newChat = _models.Chat(
-                creator=creator,
+                creator=creator['identity'],
                 alloweds=alloweds
             )
             newChat.save()
             uUser = _mUser.findOneAndUpdate(
-                '_id', creator, 'chats', newChat.id)
+                '_id', creator['identity'], 'chats', newChat.id)
             if _functions.resultError(uUser):
                 return uUser.flaskResp()
 
@@ -42,11 +42,11 @@ class Chat(Resource):
     @jwt_required
     def get(self):
         try:
-            user = get_jwt_identity()
-            sUser = _mUser.findOne('_id', user)
+            user = get_jwt_claims()
+            sUser = _mUser.findOne('_id', user['identity'])
             if _functions.resultError(sUser):
                 return sChat.flaskResp()
-            userChats = _mUser.myChats(user)
+            userChats = _mUser.myChats(user['identity'])
             if _functions.resultError(sUser._id):
                 return userChats.flaskResp()
             return _functions.setModuleSuccess(payload=list(userChats), key='mongo', status=200).flaskResp()

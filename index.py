@@ -57,7 +57,7 @@ def check_if_token_is_revoked(decrypted_token):
 @jwt.user_claims_loader
 def add_claims_to_access_token(user):
     return {
-        'identity': user['identity'],
+        'jwtId': user['identity'],
         'username': user['username']
     }
 
