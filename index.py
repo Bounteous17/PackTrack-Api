@@ -17,7 +17,7 @@ from modules.db import db as _db, tmp_db as _tmpDb
 
 _db.instance()
 
-app = Flask(__name__) # Create http server
+app = Flask(__name__)  # Create http server
 CORS(app)
 
 _Config = _functions.Config
@@ -44,6 +44,7 @@ jwt = JWTManager(app)
 
 users = {}
 
+
 @jwt.token_in_blacklist_loader
 def check_if_token_is_revoked(decrypted_token):
     jti = decrypted_token['jti']
@@ -52,30 +53,44 @@ def check_if_token_is_revoked(decrypted_token):
         return True
     return entry == 'true'
 
+
+@jwt.user_claims_loader
+def add_claims_to_access_token(user):
+    return {
+        'identity': user['identity'],
+        'username': user['username']
+    }
+
+
 @app.route('/orginate')
 def orginate():
     socketio.emit('server orginated', 'Something happened on the server!')
     return '<h1>Sent!</h1>'
+
 
 @socketio.on('message from user', namespace='/messages')
 def receive_message_from_user(message):
     print('USER MESSAGE: {}'.format(message))
     emit('from flask', message.upper(), broadcast=True)
 
+
 @socketio.on('username', namespace='/private')
 def receive_username(username):
     users[username] = request.sid
     #users.append({username : request.sid})
-    #print(users)
+    # print(users)
     print(f'Username {username} added!')
+
 
 @socketio.on('private_message', namespace='/private')
 def private_message(payload):
     username = payload['username']
     recipient_session_id = users[username]
     message = payload['message']
-    print (f'Message {message} sent to {username} with id {recipient_session_id}')
+    print(
+        f'Message {message} sent to {username} with id {recipient_session_id}')
     emit('new_private_message', message, room=recipient_session_id)
+
 
 # Append routes
 api.add_resource(_signup.UserRegistration, '/signup')
@@ -86,5 +101,5 @@ api.add_resource(_privAuth.Auth, '/auth')
 api.add_resource(_privChat.Chat, '/chat')
 api.add_resource(_privMessage.Message, '/message')
 
-#Start APP multiple CPUs
+# Start APP multiple CPUs
 app.run(host='0.0.0.0', threaded=_Config['app']['threaded'])
