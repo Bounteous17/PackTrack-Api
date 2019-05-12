@@ -40,7 +40,7 @@ app.config['JWT_SECRET_KEY'] = _Config['jwt']['secret']
 app.config['JWT_ALGORITHM'] = _Config['jwt']['algorithm']
 jwt = JWTManager(app)
 
-app.config['DEBUG'] = _Config['dev']['debug']
+# app.config['DEBUG'] = _Config['dev']['debug']
 
 users = {}
 

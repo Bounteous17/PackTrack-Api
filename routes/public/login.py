@@ -23,7 +23,7 @@ class UserLogin(Resource):
                 return unHashPassword.flaskResp()
             tokens = _auth.encodeJwt(user)
             if _functions.resultError(tokens):
-                return token.flaskResp()
+                return tokens.flaskResp()
             access_jti = get_jti(encoded_token=tokens.token)
             refresh_jti = get_jti(encoded_token=tokens.rToken)
 
