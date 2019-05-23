@@ -12,7 +12,7 @@ dev:
 jwt:
         secret: 'of course'
         algorithm: 'HS512'
-        access_expires: 30 #minutes
+        access_expires: 3000 #minutes
         refresh_expires: 4 #days
 redis:
         host: 'localhost'

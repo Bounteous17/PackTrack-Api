@@ -14,6 +14,7 @@ from routes.private import user as _privUser, auth as _privAuth, chat as _privCh
 from models import rest as _rest, redis as _redis, auth as _modelAuth
 # Modules
 from modules.db import db as _db, tmp_db as _tmpDb
+from modules.user import user as _moduleUser
 
 _db.instance()
 
@@ -57,7 +58,7 @@ def check_if_token_is_revoked(decrypted_token):
 @jwt.user_claims_loader
 def add_claims_to_access_token(user):
     return {
-        'jwtId': user['identity'],
+        'identity': user['identity'],
         'username': user['username']
     }
 
@@ -74,12 +75,10 @@ def receive_message_from_user(message):
     emit('from flask', message.upper(), broadcast=True)
 
 
-@socketio.on('username', namespace='/private')
-def receive_username(username):
-    users[username] = request.sid
-    #users.append({username : request.sid})
-    # print(users)
-    print(f'Username {username} added!')
+@socketio.on('new-session', namespace='/private')
+def receive_username(user):
+    _moduleUser.findOneAndUpdate('_id', user, 'sids', request.sid)
+    print(f'Username {user} added!')
 
 
 @socketio.on('private_message', namespace='/private')

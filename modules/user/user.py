@@ -1,4 +1,4 @@
-from utils import functions as _functions, responses as _responses
+from utils import functions as _functions, responses as _responses, db as _uDb
 from models import models as _models
 from modules.db import utils as _mDbUtils
 import bson
@@ -96,7 +96,12 @@ def findOneAndUpdate(field, value, uField, uValue):
             return checkUser
         if not checkUser:
             return _responses.userNotFound()
-        return _models.User.objects(** condition).update_one(push__chats=uValue)
+        if uField == 'chats':
+            return _models.User.objects(** condition).update_one(push__chats=uValue)
+        elif uField == 'sids':
+            if isinstance(value, str):
+                value = _uDb.hexToObjectId(value)
+            return _models.User.objects(** condition).update_one(push__sids=uValue)
     except Exception as e:
         return _functions.setModuleError(payload=e, error='Error updating user ...', status=500)
 
