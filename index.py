@@ -5,6 +5,7 @@ from flask_restful import Api
 from flask_jwt_extended import JWTManager
 from flask_socketio import SocketIO, send, emit
 from flask_cors import CORS
+import pickle
 
 from utils import functions as _functions, auth as _auth
 # Routes imports
@@ -77,8 +78,25 @@ def receive_message_from_user(message):
 
 @socketio.on('new-session', namespace='/private')
 def receive_username(user):
-    _moduleUser.findOneAndUpdate('_id', user, 'sids', request.sid)
-    print(f'Username {user} added!')
+    sids = _tmpDb.SocketIoSids.get(user)
+    if sids is not None:
+        sids = pickle.loads(sids)
+        sids.append(request.sid)
+    else:
+        sids = [request.sid]
+
+    _tmpDb.SocketIoSids.set(user, pickle.dumps(sids))
+    # _moduleUser.findOneAndUpdate('_id', user, 'sids', request.sid)
+    print(f'New user {user} added!')
+
+
+@socketio.on('new-chat', namespace='/private')
+def receive_username(user):
+    sids = _tmpDb.SocketIoSids.get('5cdece9459457e6e5cd0d65e')
+    sids = pickle.loads(sids)
+    for sid in sids:
+        emit('new_private_chat', 'New chat with you!', room=sid)
+    print(f'New chat {user} notifyed!')
 
 
 @socketio.on('private_message', namespace='/private')
