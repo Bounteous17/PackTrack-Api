@@ -1,3 +1,6 @@
+Check out the Wiki first!
+https://github.com/bounteous/PackTrack-Api/wiki
+
 # PackTrack-Api
 
 The purpose of this APP is to provide the necessary services so that customers can send the encrypted content on the client side to another recipient of the content. On the client side before starting a chat, two private keys are generated using AES-256. During the course of message exchange between users, they make use of these individual secret keys to transmit the content through this API.
